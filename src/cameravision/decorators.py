@@ -1,5 +1,7 @@
 import functools
+
 import numpy as np
+
 
 def point_transform(f):
     """Decorator to make a function, which transforms multiple points, also accept a single point,
@@ -13,7 +15,7 @@ def point_transform(f):
 
         reshaped = np.reshape(points, [-1, points.shape[-1]])
         reshaped_result = f(self, reshaped, *args, **kwargs)
-        return np.reshape(reshaped_result, [*points.shape[:-1], -1])
+        return np.reshape(reshaped_result, [*points.shape[:-1], reshaped_result.shape[-1]])
 
     return wrapped
 
@@ -24,7 +26,7 @@ def camera_transform(f):
 
     @functools.wraps(f)
     def wrapped(self, *args, **kwargs):
-        inplace = kwargs.pop('inplace', True)
+        inplace = kwargs.pop("inplace", True)
         if inplace:
             f(self, *args, **kwargs)
             return self
