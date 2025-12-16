@@ -1,16 +1,18 @@
-import cv2
-import numpy as np
-import numba
-import cameravision.distortion
-import cameravision.validity
-import cameravision.coordframes
-import cameravision.maps
-import cameravision.util
-import typing
-import rlemasklib
 import functools
-import cameravision.points_impl
+import typing
+
 import boxlib
+import cv2
+import numba
+import numpy as np
+import rlemasklib
+
+import cameravision.coordframes
+import cameravision.distortion
+import cameravision.maps
+import cameravision.points_impl
+import cameravision.util
+import cameravision.validity
 
 if typing.TYPE_CHECKING:
     from cameravision import Camera
@@ -22,10 +24,24 @@ def reproject_image_points(
     new_camera: "Camera",
     precomp_undist_maps: bool = False,
 ) -> np.ndarray:
+    """Reproject 2D image points from `old_camera` to `new_camera`.
+
+    Args:
+        points: The 2D image points in the `old_camera` image. Shape (..., 2).
+        old_camera: The camera that captured the original points.
+        new_camera: The camera to which the points should be reprojected.
+        precomp_undist_maps: Whether to precompute undistortion maps for the cameras
+
+    Returns:
+        The reprojected 2D image points in the `new_camera` image. Shape (..., 2).
+    """
     points = np.asarray(points, dtype=np.float32)
     points_resh = np.ascontiguousarray(points.reshape(-1, 2))
+    # The argument order has to be new_camera, old_camera
+    # it is because the point and the map implementation is kept analogous
+    # but one goes from old to new, the other from new to old when warping
     reproj_resh = cameravision.points_impl.make(
-        points_resh, old_camera, new_camera, precomp_undist_maps
+        points_resh, new_camera, old_camera, precomp_undist_maps
     )
     return reproj_resh.reshape(points.shape)
 
