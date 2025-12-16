@@ -760,7 +760,7 @@ def clip_polygon_to_z_positive_eps(polygon, eps):
 
 
 def rot_and_clip_shapely_to_front_space(polygon, R, eps=1e-3):
-    clean_up_polygon(polygon)
+    polygon = clean_up_polygon(polygon)
     eps = np.float32(eps)
 
     if isinstance(polygon, shapely.Polygon):
