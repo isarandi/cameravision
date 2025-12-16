@@ -263,6 +263,24 @@ def mask_image_by_rle(im, rle, value):
 
 
 def reproject_box(old_box, old_camera, new_camera):
+    """Reprojects a bounding box from one camera to another.
+
+    This is an ambiguous operation in general, as the computing the box loses information about
+    the precise segmentation of the object.
+
+    Therefore, reproject(bbox(mask)) != bbox(reproject(mask)) in general.
+    We apply a heuristic here:
+
+    reproject(box) = (bbox(reproject(corners(box))) + bbox(reproject(side_midpoints(box)))) / 2
+
+    Args:
+        old_box: The bounding box in the old camera image.
+        old_camera: The camera that captured the image where the object has bbox old_box.
+        new_camera: The camera to which the box should be reprojected.
+
+    Returns:
+        The reprojected bounding box in the new camera image.
+    """
     return (
         reproject_box_corners(old_box, old_camera, new_camera)
         + reproject_box_side_midpoints(old_box, old_camera, new_camera)
@@ -270,12 +288,14 @@ def reproject_box(old_box, old_camera, new_camera):
 
 
 def reproject_box_corners(old_box, old_camera, new_camera):
+    """Reprojects a bounding box from one camera to another using its corners."""
     old_corners = boxlib.corners(old_box)
     new_corners = reproject_image_points(old_corners, old_camera, new_camera)
     return boxlib.bb_of_points(new_corners)
 
 
 def reproject_box_side_midpoints(old_box, old_camera, new_camera):
+    """Reprojects a bounding box from one camera to another using its side midpoints."""
     old_side_midpoints = boxlib.side_midpoints(old_box)
     new_side_midpoints = reproject_image_points(old_side_midpoints, old_camera, new_camera)
     return boxlib.bb_of_points(new_side_midpoints)
@@ -527,6 +547,15 @@ def LUT(im, lut, dst):
 
 
 def encode_srgb(im, dst=None):
+    """Encodes a linear 16-bit image to 8-bit sRGB.
+
+    Args:
+        im: Input pixel values of dtype np.uint16
+        dst: Optional destination array of dtype np.uint8
+
+    Returns:
+        The sRGB encoded image of dtype np.uint8
+    """
     if dst is not None and dst.dtype != np.uint8:
         raise ValueError("The destination dtype must be np.uint8")
     if not im.dtype == np.uint16:
@@ -538,6 +567,15 @@ def encode_srgb(im, dst=None):
 
 
 def decode_srgb(im, dst=None):
+    """Decodes an 8-bit sRGB image to linear 16-bit.
+
+    Args:
+        im: Input pixel values of dtype np.uint8
+        dst: Optional destination array of dtype np.uint16
+
+    Returns:
+        The linear decoded image of dtype np.uint16
+    """
     if dst is not None and dst.dtype != np.uint16:
         raise ValueError("The destination dtype must be np.uint16")
     if not im.dtype == np.uint8:
