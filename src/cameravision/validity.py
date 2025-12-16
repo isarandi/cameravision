@@ -108,7 +108,7 @@ def get_valid_distortion_region_cached(
     limit: float = 5,
     n_vertices: int = 128,
     n_vertices_coarse: int = 24,
-    n_steps_line_search: int = 30,
+    n_steps_line_search: int = 100,
     n_iter_newton: int = 3,
 ) -> np.ndarray:
     dist_coeffs = np.frombuffer(dist_coeffs, np.float32)
