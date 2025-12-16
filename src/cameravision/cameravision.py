@@ -625,6 +625,11 @@ class Camera:
     def extrinsic_matrix(self):
         return self.get_extrinsic_matrix()
 
+    @extrinsic_matrix.setter
+    def extrinsic_matrix(self, matrix: np.ndarray):
+        self.R = matrix[:3, :3].astype(np.float32)
+        self.t = -self.R.T @ matrix[:3, 3].astype(np.float32)
+
     def get_inv_extrinsic_matrix(self) -> np.ndarray:
         """Get the 4x4 extrinsic transformation matrix that maps 3D points in camera space to
         3D points in world space."""
