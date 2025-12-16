@@ -68,8 +68,7 @@ class Camera:
             rot_world_to_cam = np.eye(3, dtype=dtype)
 
         if extrinsic_matrix is not None:
-            self.R = np.asarray(extrinsic_matrix[:3, :3], dtype=dtype)
-            self.t = -self.R.T @ extrinsic_matrix[:3, 3].astype(dtype)
+            self.extrinsic_matrix = np.asarray(extrinsic_matrix, dtype=dtype)
         else:
             self.R = np.asarray(rot_world_to_cam, dtype=dtype)
             if optical_center is not None:
