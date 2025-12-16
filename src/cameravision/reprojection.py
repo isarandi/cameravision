@@ -417,15 +417,15 @@ def reproject_rle_mask(
 ):
     if (
         warp_in_rle
-        and not old_camera.has_fishye_distortion()
-        and not new_camera.has_fishye_distortion()
+        and not old_camera.has_fisheye_distortion()
+        and not new_camera.has_fisheye_distortion()
     ):
         return _reproject_rle_mask_in_rle(rle_mask, old_camera, new_camera, dst_shape)
     else:
         cropped_rle, bbox = rle_mask.tight_crop()
         old_camera_shifted = old_camera.shift_image(-bbox[:2], inplace=False)
         mask = cropped_rle.to_array(255, order='C')
-        new_mask, mask_mask = reproject_image(
+        new_mask = reproject_image(
             mask,
             old_camera_shifted,
             new_camera,
@@ -443,12 +443,15 @@ def reproject_rle_mask(
 
 
 def _reproject_rle_mask_in_rle(rle_mask, old_camera, new_camera, dst_shape):
-    valid_rle = cameravision.get_valid_mask_reproj(new_camera, old_camera, None, rle_mask.shape)
+    valid_rle = cameravision.validity.get_valid_mask_reproj(
+        new_camera, old_camera, None, rle_mask.shape
+    )
     rle_masked_to_valid = rle_mask & valid_rle
 
     if not old_camera.has_distortion() and not new_camera.has_distortion():
         homography = cameravision.coordframes.mul_K_M_Kinv(
-            new_camera.intrinsic_matrix, new_camera.R @ old_camera.R.T,
+            new_camera.intrinsic_matrix,
+            new_camera.R @ old_camera.R.T,
             old_camera.intrinsic_matrix,
         )
         return rle_masked_to_valid.warp_perspective(homography, dst_shape)
@@ -493,7 +496,7 @@ def get_srgb_decoder_lut():
             lut[i] = 0
         elif lut[i] > 1:
             lut[i] = 1
-    return (lut * (1 << 16 - 1)).astype(np.uint16)
+    return (lut * ((1 << 16) - 1)).astype(np.uint16)
 
 
 @functools.lru_cache
@@ -501,7 +504,7 @@ def get_srgb_decoder_lut():
 def get_srgb_encoder_lut():
     lut = np.zeros(1 << 16, np.float64)
     for i in numba.prange(1 << 16):
-        x = i / (1 << 16 - 1)
+        x = i / ((1 << 16) - 1)
         if x <= 0.0031308:
             lut[i] = x * 12.92
         else:
