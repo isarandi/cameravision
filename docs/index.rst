@@ -4,7 +4,14 @@ Documentation
 
 .. toctree::
    :maxdepth: 3
-   :caption: Contents
+   :caption: Explanation
+
+   explanation/reprojection
+   explanation/distortion-validity
+
+.. toctree::
+   :maxdepth: 3
+   :caption: API Reference
 
    modules
 
