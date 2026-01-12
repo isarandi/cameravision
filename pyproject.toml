@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cameravision"
 dynamic = ["version"]
-description = "Manipulate camera calibration parameters and warp images for computer vision tasks."
+description = "Transitional package. cameravision has been renamed to deltacamera."
 authors = [
     { name = "István Sárándi", email = "istvan.sarandi@uni-tuebingen.de" }
 ]
@@ -24,7 +24,7 @@ keywords = [
 ]
 
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 7 - Inactive",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
@@ -42,44 +42,14 @@ classifiers = [
 ]
 
 dependencies = [
-    "opencv-python",
-    "numpy",
-    "scipy",
-    "numba",
-    "shapely",
-    "msgpack-numpy",
-    "boxlib",
-    "rlemasklib",
-]
-
-[project.optional-dependencies]
-test = [
-    "pytest>=7.0",
-    "pytest-cov",
-]
-lint = [
-    "ruff",
-    "pre-commit",
-]
-docs = [
-    "sphinx",
-    "pydata-sphinx-theme",
-    "sphinx-autoapi",
-    "sphinxcontrib-bibtex",
-    "sphinx-markdown-builder",
-    "setuptools-scm",
-    "toml",
-]
-dev = [
-    "cameravision[test,lint,docs]",
+    "deltacamera",
 ]
 
 [project.urls]
-Homepage = "https://github.com/isarandi/cameravision"
-Repository = "https://github.com/isarandi/cameravision"
-Documentation = "https://cameravision.readthedocs.io/"
-Issues = "https://github.com/isarandi/cameravision/issues"
-Changelog = "https://github.com/isarandi/cameravision/releases"
+Homepage = "https://github.com/isarandi/deltacamera"
+Repository = "https://github.com/isarandi/deltacamera"
+Documentation = "https://deltacamera.readthedocs.io/"
+Issues = "https://github.com/isarandi/deltacamera/issues"
 Author = "https://istvansarandi.com"
 
 [tool.setuptools_scm]
@@ -92,16 +62,3 @@ package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_functions = ["test_*"]
-
-[tool.ruff]
-line-length = 99
-target-version = "py39"
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
