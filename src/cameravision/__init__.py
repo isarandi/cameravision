@@ -22,5 +22,10 @@ warnings.warn(
     stacklevel=2,
 )
 
+try:
+    from ._version import version as __version__
+except ImportError:
+    __version__ = "0.0.0"
+
 from deltacamera import *  # noqa: E402, F401, F403
 from deltacamera import __all__  # noqa: E402, F401
